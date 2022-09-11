@@ -9,3 +9,5 @@ output/fits
 
 manuscript/latex/_cache
 manuscript/latex/.*.thm
+assets/.gitignore
+
