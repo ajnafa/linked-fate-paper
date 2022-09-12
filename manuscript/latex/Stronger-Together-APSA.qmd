@@ -131,7 +131,7 @@ Finally, to identify ancestry, the CMPS asked respondents "To what country do yo
 
 [^1]: We recode open-ended responses into their own category if at least five respondents stated a given ancestry. For those with fewer than five responses or for whom open-ended answers were indecipherable, we construct an "Other \[Asian/Latino\]" ancestry category.
 
-## Bayesian Multilevel Regression
+## Bayesian Multilevel Regression and Post-Stratification
 
 Multilevel Regression and Post-Stratification (MrP) is a powerful technique for post-estimation adjustment of survey data that allows us to obtain "representative" estimates for population sub-groups that would be impossible to obtain through direct survey sampling and provides a post-estimation alternative to more common pseudo-likelihood based weighting methods [@Park2004; @Gelman2007]. Although MrP has been widely used in political science and is considered the "gold standard" for estimating public opinion in subnational geographies on the basis of national survey data [@Caughey2019; @Lax2009; @Lax2009a; @Tausanovitch2014; @Butz2016], its use as a tool outside of this context has been limited. Yet, as we demonstrate here the use of MrP for subgroup analysis and non-linear interaction estimation is a straightforward extension [@Downes2018; @Kennedy2021]. Rather than differences among U.S. States or congressional districts, our interest here lies in differences within and among various pan-ethnic identity groups.
 
