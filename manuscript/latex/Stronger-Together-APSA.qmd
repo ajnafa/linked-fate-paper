@@ -1,0 +1,276 @@
+---
+title: "Stronger Together?"
+subtitle: "Linked Fate and Voter Preferences in the 2020 Election"
+abstract: "\\dropcap{H}ow do intersecting identities influence candidate preference among members of pan-ethnic racial groups? In this paper we examine how racial, gender, and intersectional dimensions of linked fate shaped candidate preferences among Asian and Latino Americans in the 2020 presidential election. Drawing on a post-election survey with a large over-sample of non-white respondents, we employ Bayesian multilevel regression with post-stratification (MrP) to examine variation in the role of linked fate within pan-ethnic identity groups. Our results suggest intersectional linked fate is a strong negative predictor of support for Trump among both Asian and Latino respondents. We also find heterogeneity in this relationship across pan-ethnic subgroups, particularly among those who express lower levels of linked fate."
+first-author:
+  name: "A. Jordan Nafa"
+  affiliation: "University of North Texas"
+  orcid: "0000-0001-5574-3950"
+second-author:
+  name: "Meredith Walsh Niezgoda"
+  affiliation: "University of North Texas"
+third-author:
+  name: "P. DeAnne Roark"
+  orcid: "0000-0002-5785-6817"
+  affiliation: "University of North Texas"
+fourth-author:
+  name: "Valerie Martinez-Ebers"
+  affiliation: "University of North Texas"
+firstfooter: "This manuscript was prepared for the American Political Science Association's Annual Meeting in Montreal, Quebec, September 15--18, 2022."
+format: 
+  pdf:
+    template: "../../assets/Manuscript_Template.tex"
+    highlight-style: arrow
+    linkcolor: "untgreen"
+    keep-tex: true
+    pdf-engine: xelatex
+    cite-method: biblatex
+    biblio-style: chicago-authordate
+    mathfont: "Libertinus Math"
+fontsize: 12pt
+papersize: letterpaper
+fontfamily: "libertine"
+urlcolor: untgreen
+github: "linked-fate-paper"
+bibliography: "../../assets/references.bib"
+multiauthor: true
+double-spacing: true
+runninghead: "Nafa, Walsh Niezgoda, Roark, and Martinez-Ebers"
+tbl-cap-location: top
+header-includes: 
+  - \usepackage{mathtools, unicode-math}
+  - \setmathfont{NewCMMath-Regular.otf}
+  - \usepackage{afterpage}
+  - \usepackage{censor}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  cache = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE,
+  comment = ' ',
+  fig.align = "center",
+  cache.path = '_cache/',
+  fig.process = function(x) {
+    x2 = sub('-\\d+([.][a-z]+)$', '\\1', x)
+    if (file.rename(x, x2))
+      x2
+    else
+      x
+  }
+)
+
+pacman::p_load(
+  "tidyverse",
+  "data.table",
+  "dtplyr",
+  "kableExtra",
+  install = FALSE
+)
+```
+
+\dropcap{H}ow do intersecting identities influence candidate preference among members of pan-ethnic racial groups? In this paper we examine the relationship between racial, gender, and intersectional dimensions of linked fate and support for Donald Trump among Asian and Latino Americans in the 2020 presidential election. Drawing on the 2020 Collaborative Multiracial Post-Election Survey, we employ Bayesian multilevel regression with post-stratification (MrP) to examine variation in different dimensions of linked fate within pan-ethnic identity groups. Our results suggest intersectional linked fate is a strong negative predictor of support for Trump among both Asian and Latino respondents. Yet, we also find both significant non-linearity in this relationship and heterogeneity across different pan-ethnic subgroups, particularly among those who express lower levels of linked fate.
+
+# Existing Research
+
+Conceptually, linked fate describes an individual or collective belief that one's own life circumstances are inherently intertwined with those of their social identity group. As @Dawson1995 argued, the strength of an individual's perceived ties to other members of their racial group has a profound influence on political decision-making and leads individuals to place greater consideration on how outcomes may impact their identity group as a whole. Although the term was originally coined to describe the voting behavior of Black Americans, recent research applies the concept to other ethno-racial groups albeit with varying degrees of success [@Masuoka2006; @Fraga2010; @Casellas2018; @Sanchez2019; @JonesCorrea1996; @Stokes2003].
+
+Among Asian and Latino Americans, for example, linked fate tends to be more elusive and the factors that contribute to its expression are largely context dependent [@Junn2008; @Schildkraut2016; @Sanchez2019; @Le2020]. Several studies suggest Asian ethnic identity is shaped by structural incentives such as U.S. immigration policy which contributes to the creation of stereotypes and racial tropes [@Junn2008], or hostile anti-Asian rhetoric such as that espoused during the 2016 presidential campaign and reflected in the discriminatory policies enacted in the first year of Donald Trump's presidency [@Le2020]. Likewise, research indicates linked fate among Latino Americans is largely a function of racial salience, sociopolitical climate, and individual incorporation into the American polity [@Fraga2010; @Sanchez2019]. For both Asian and Latino Americans, age, educational attainment, direct experiences with discrimination, and feelings of exclusion tend to be related to an individual's level of linked fate [@Kiang2021].
+
+In contrast to the Black population which has a largely shared history around the institution of slavery in the United States, Latino and Asian American populations tend to have a substantially larger proportion of immigrants who come from a diverse range of ethnic, cultural, and linguistic backgrounds making it more accurate to term these pan-ethnic rather than racial identity groups[@Espiritu2016, 215-217; @Padilla1985]. Factors such as time since immigration, educational attainment, national origin, experience of discrimination, and level of political incorporation vary substantially within these larger groups and may all influence whether a person identifies more closely with their specific country of origin or the broader pan-ethnic identity [@Masuoka2006; @Chan2021; @Jang2021]. This additional layer of complexity may at least in part explain the more elusive nature of linked fate among these groups relative to Black Americans [@Casellas2018].
+
+Indeed, the pan-ethnic dimension of linked fate among Asian and Latino Americans is often but one of several overlapping identities and may be more or less salient in nature than identification with a specific subgroup such as one's national origin [@Jang2021; @Chan2021; @Miller1981]. Despite recent calls for a more nuanced approach to the study of pan-ethnic identification [@Chan2021; @Lee2021; @Le2021], existing studies focus largely on the pan-ethnic aggregates when analyzing political attitudes and behavior thus ignoring a potentially large degree of heterogeneity among Asian American and Latino subgroups. Among the few studies to take a deeper look at variance within groups, @Arora2021 suggest attitudes among Southeast Asians tend to be more politically liberal compared to their East Asian counterparts.
+
+Other works highlight a similar deficit in detail afforded to how multiple overlapping identities--race and gender, for example--work in concert to influence individual attitudes and behavior [@Brown2014; @Montoya2020; @Montoya2021; @Gershon2019]. Studies suggest, for instance, gender-based conceptions of linked fate may have a positive impact on political participation among women [@Jenkins2021], though such an effect is likely moderated by both race and gender-identity salience [@Simien2005; @Phillips2018; @Junn2017]. Furthermore, linked fate appears to be consistent across dimensions meaning individuals with high levels of gender linked fate are likely to exhibit similarly high levels of racial or pan-ethnic linked fate [@Gay2016].
+
+# Social Identities in the Era of Trump
+
+Social identity theory posits that individuals have an inherent desire to "belong to a group that is positively evaluated and positioned with respect to other groups" [@Abascal2015, 792]. Since social identities arise from the internalization of an individual's group membership and the emotional significance placed on that membership [@Huddy2013b; @Turner1986; @Tajfel1971], we might ask *what makes a given group identity salient*, and given the reality that individuals may hold an array of different, potentially contrasting identities, each of which varies in its intensity and fluidity, *what makes some identities more salient than others*? If pan-ethnic identities are made salient by perceptions of discrimination or threat as some scholars suggest [@Shaw2019; @StokesBrown2012; @Le2020], one might reasonably suspect the often hostile anti-immigrant and nativist rhetoric that characterized Donald Trump's presidency and election campaigns could prove a sufficient conduit to make pan-ethnic identity a salient factor in candidate evaluation. Indeed, among Asians Americans and Latinos, we have good reason to expect individuals with higher levels of linked fate to be less likely to express support Trump.
+
+Yet, this is at best an overly simplistic view of the way context shapes social identities as it largely ignores the reality that different intersecting identities may also interact with one another in a manner that serves to either reinforce or mitigate the salience of a given identity. Consider, for example, the historical experience with gender inequality and their inferior social and political status relative to men within patriarchal societies--the United States being no exception. Trump's misogynistic rhetoric was a consistent feature of his career before entering politics, his presidential campaign, and his tenure in office--the infamous Access Hollywood tape in which Trump is heard saying "*And when you're a star, they let you do it. You can do anything...Grab them by the \censor{pussy}. You can do anything*" being but one of many examples [@Burns2016].
+
+In conjunction with a heightened sense of alarm in the lead up to 2020 election owing to the success of the social conservative movement at chipping away hard-fought progress towards equality, we have reason to expect gender-based group consciousness may have also played a salient role in shaping candidate evaluation in the 2020 presidential election. Much like the concept of pan-ethnic or racial linked fate, gender-based linked fate, is characterized by a belief that an individual's well being and life prospects are intrinsically tied to those who share their gender identity [@Gay1998]. This leads us to consider the possibility that gender linked fate may have also played a role in shaping support for Trump, particularly among women who are faced with hostility towards both their pan-ethnic and gender identities.
+
+The notion of perceived threats to multiple intersecting social identities leads us to consider how the salience of these threats may vary within different pan-ethnic groups and by gender. Trump's frequent dehumanization of migrants seeking asylum in the United States from countries such as Honduras, Guatemala, and El Salvador suggests members of certain pan-ethnic subgroups may face a more hostile environment than others and thus pan-ethnic identity may be more salient for these subgroups. Asian Americans also often faced overt hostility directed at certain groups--from the Trump administration's travel ban directed at individual's from majority Muslim countries to the anti-Asian rhetoric that characterized the administrations response to the Covid-19 pandemic and the spike in hate crimes against individuals of East Asian descent that followed, some pan-ethnic subgroups faced greater threat than others.
+
+This line of reasoning leads us to two final considerations. First, we expect the salience of both pan-ethnic and gender-based dimensions of linked fate to vary across different sub-groups. Our second, perhaps broader consideration is that this context of threat against multiple identities may activate a more salient overarching sense of group consciousnesses--what we term here *intersectional linked fate*--in which an individual views their prospects in life are tied not merely to their pan-ethnic or gender identity group but rather to other members of marginalized groups more broadly who also share their gender identity as a result of overlapping interests in the face of contextual threat. Thus we expect *intersectional linked fate* may play a role in shaping individuals' support for Trump that is greater than that of gender or pan-ethnic dimensions of linked fate alone.
+
+# Methods and Data
+
+To examine the relationship between pan-ethnic, gender, and intersectional dimensions of linked fate and candidate preferences, we draw on the 2020 wave of Collaborative Multiracial Post-Election Survey (CMPS), an expansive post-election survey carried out in the United States between April 2, 2021 and August 25, 2021 [@Frasure2021]. For our purposes in this paper, we use the Asian and Latino sub-samples which consist of 3,929 and 3,950 respondents respectively. Our outcome of interest herein, how respondents evaluated then presidential candidate Donald Trump, is constructed from a question asking respondents which presidential candidate they supported in the 2020 election--regardless of whether they voted--and takes a value of 1 if a respondent expressed support for Donald Trump and 0 otherwise.
+
+The 2020 wave of the CMPS includes a battery of "linked fate" items that capture the degree to which respondents view their own prospects in life as intertwined with those of other social identity groups, including their own. For each item, respondents were asked "How much do you think what happens to the following groups here in the U.S. will have something to do with what happens in your life?" and for our purposes here, we focus on in-group pan-ethnic linked fate among Asian and Latino respondents, gender linked fate, and intersectional linked fate. Each of these items is measured on a five category ordinal scale that ranges from "Nothing to do with what happens in my life" to "A huge amount to do with what happens in my life," and the wording for each of which is shown in @tbl-linked-fate.
+
+
+In addition to these two items, we also rely on several respondent-level demographic predictors that may influence survey sampling. These include age in five-year intervals from 18-24 to 75+, sex, educational attainment which we recode into six categories ranging from "Some High School or Less" to "Post-Graduate Degree," citizenship status, and partisan self-identification. We code party identification based on two survey items--an initial question asking respondents "Generally speaking, do you think of yourself as a Republican, a Democrat, an independent, or something else?" and a follow up asking those who chose either "independent" or "other party" on the first question "If you had to choose, do you consider yourself closer to the Republican party or the Democratic party?" and code those who chose either "other party" or "don't know" on the follow up question into an "other/don't know" category. Additional information on coding and descriptive statistics for each of these predictors is provided in the supplementary appendix.
+
+```{r tab-linked-fate}
+#| label: tbl-linked-fate
+#| tbl-cap: 2020 CMPS Linked Fate Questions
+linked_fate_table <- tibble::tribble(
+  ~ dimension, ~ question,
+  "Pan-Ethnic", "What happens to [Asian/Hispanic] people will have...",
+  "Gender", "What happens to [Respondent's Gender] will have...",
+  "Intersectional", "What happens to [Respondent's Gender] of color will have..."
+  )
+
+kbl(
+  linked_fate_table,
+  format = "latex",
+  booktabs = TRUE,
+  col.names = c("Linked Fate Dimension", "Question Wording"),
+  row.names = FALSE,
+  align = "cc"
+) |>
+  kable_styling(full_width = FALSE)
+```
+
+Finally, to identify ancestry, the CMPS asked respondents "To what country do you or your family trace your ancestry?" and provided an open-ended "other" category in the event a respondent did not fall into one of two-dozen pre-defined categories for each group. We recode these open ended responses along with the original categories to match ancestry groups designated in the census 5-year public use micro series data [@Ruggles2022], which results in 20 unique ancestry groups for the Asian sample and 23 groups for the Latino sample.[^1]
+
+[^1]: We recode open-ended responses into their own category if at least five respondents stated a given ancestry. For those with fewer than five responses or for whom open-ended answers were indecipherable, we construct an "Other \[Asian/Latino\]" ancestry category.
+
+## Bayesian Multilevel Regression
+
+Multilevel Regression and Post-Stratification (MrP) is a powerful technique for post-estimation adjustment of survey data that allows us to obtain "representative" estimates for population sub-groups that would be impossible to obtain through direct survey sampling and provides a post-estimation alternative to more common pseudo-likelihood based weighting methods [@Park2004; @Gelman2007]. Although MrP has been widely used in political science and is considered the "gold standard" for estimating public opinion in subnational geographies on the basis of national survey data [@Caughey2019; @Lax2009; @Lax2009a; @Tausanovitch2014; @Butz2016], its use as a tool outside of this context has been limited. Yet, as we demonstrate here the use of MrP for subgroup analysis and non-linear interaction estimation is a straightforward extension [@Downes2018; @Kennedy2021]. Rather than differences among U.S. States or congressional districts, our interest here lies in differences within and among various pan-ethnic identity groups.
+
+In practice, MrP requires we have information on the joint distribution in the population for each predictor we wish to include a model and on its face this may present a barrier to the method's application. Indeed, it may in part explain why our application of MrP in this manner is novel in the race and ethnic politics literature.[^2] To overcome this obstacle, we follow common practice in the subnational public opinion literature by first developing models to predict each of our non-census variables--partisan identification and linked fate--we include in our main specification and adding their expected marginal distributions to the post-stratification table.
+
+[^2]: We are aware of no prior studies that make use of MrP to examine variation within pan-ethnic identity groups in this manner in political science.
+
+We begin by estimating a model for partisan identification among each of the two samples, which allows us to include it in the subsequent models for the linked fate predictors and accounts for the likely fact that the CMPS tends to over sample Democrats. Since party identification lacks any natural ordering, we employ multinomial logistic regression to model the response as a function of respondent demographics--age, educational attainment, sex, citizenship status, and ancestry--and group level predictors for the share of each ancestry group with at least a university education and median age. 
+
+Since our ultimate goal is to examine gender differences within sub-groups, we include interactions between gender and ancestry in each model [@Ghitza2013]. For each group, we consider several different sets of interactions and use an ensemble model averaging approach to combine the predictions for the post-stratification table [@Ornstein2019; @Yao2018]. We then take a similar approach to estimating the population distribution of for each of the linked fate measures with the primary difference being that each of these models includes an additional hierarchical predictor for respondent partisan identification. In the interest of space, we reserve a detailed discussion of this approach and each of the underlying models for the supplementary appendix.
+
+Finally, we model the outcome specification as a binomial count where for each cell in the aggregate table we observe $k$ respondents who express support Trump out of $n$ possible trials. This aggregate formulation is mathematically equivalent to a multilevel logistic regression model but provides substantial benefits in terms of computational tractability as the total sample size increases. For each sample, our outcome model can be expressed as
+
+\small
+
+$$
+\begin{aligned}
+y &\sim \mathrm{Binomial}(n, k, \theta)\\
+\mathrm{logit}(\theta) &= \alpha + \beta_{1}\text{Female}_{i} + \beta_{2}\text{Citizen}_{i} + \upsilon_{j[i]}^{\mathrm{Ancestry}} + \upsilon_{l[i]}^{\mathrm{Education}} + \upsilon_{m[i]}^{\mathrm{Age}} + \upsilon_{o[i]}^{\mathrm{Partisan}} +\\
+&\quad \upsilon_{p[i]}^{\mathrm{Linked~Fate}} + \upsilon_{q[i],p[i]}^{\mathrm{Female \times Linked~Fate}} + \upsilon_{q[i],j[i]}^{\mathrm{Female \times Ancestry}} + \upsilon_{p[i],j[i]}^{\mathrm{Linked~Fate \times Ancestry}}\\
+\end{aligned}
+$$ {#eq-binomial-mrp} 
+
+\normalsize
+
+\noindent where
+
+\small
+$$
+\begin{aligned}
+\upsilon_{j}^{\mathrm{Ancestry}} &\sim \mathcal{N}(\left[\gamma_{0} + \gamma_{1}\text{\% College}_{j} + \gamma_{2}\text{Median Age}_{j} \right], ~\sigma^{\mathrm{Ancestry}}) \quad \text{for } j \in \{1, 2, \dots, J\}\\
+\upsilon_{l}^{\mathrm{Education}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Education}})  \quad \text{for } l \in \{1, 2, \dots, L\}\\
+\upsilon_{m}^{\mathrm{Age}}&\sim  \mathcal{N}(0, ~\sigma^{\mathrm{Age}})  \quad \text{for } m \in \{1, 2, \dots, M\}\\
+\upsilon_{o}^{\mathrm{Partisan}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Partisan}})  \quad \text{for } o \in \{1, 2, \dots, O\}\\
+\upsilon_{p}^{\mathrm{Linked~Fate}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Linked~Fate}})\quad \text{for } p \in \{1, 2, \dots, P\}\\
+\upsilon_{q,p}^{\mathrm{Female \times Linked~Fate}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Female \times Linked~Fate}}) \quad \text{for } q \in \{1, 2, \dots, Q\} \text{ and } p \in \{1, 2, \dots, P\}\\
+\upsilon_{q,j}^{\mathrm{Female \times Ancestry}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Female \times Ancestry}}) \quad \text{for } q \in \{1, 2\} \text{ and } j \in \{1, 2, \dots, J\}\\
+\upsilon_{p,j}^{\mathrm{Linked~Fate \times Ancestry}}&\sim \mathcal{N}(0, ~\sigma^{\mathrm{Linked~Fate \times Ancestry}}) \quad \text{for } p \in \{1, 2, \dots, P\} \text{ and } j \in \{1, 2, \dots, J\}
+\end{aligned}
+$$ {#eq-binomial-mrp-var}
+
+\normalsize
+
+In @eq-binomial-mrp, $\alpha$ represents a global intercept that captures the overall mean across all groups while $\beta_{k}$ denotes the fixed effect of the $k^{th}$ predictor. In this formulation, categorical predictors with more than three levels are specified hierarchically and thus each of the $\upsilon$ terms denotes a varying intercept over respondents $i$. This allows us to partially pool information across groups and avoids over-fitting the data by penalizing model complexity and pooling estimates towards the mean [@Gelman2007; @Gelman2012a]. The variance structure shown in @eq-binomial-mrp-var depicts the group-level effects, which are assumed multivariate normal with mean zero and scale $\sigma$ for each $\upsilon$ term. The ancestry-level predictors for median age and percentage college educated we include in the model give structure to the hierarchical variances as expressed in the $\gamma$ terms. 
+
+To control the degree of pooling and stabilize computation, we place weakly informative guassian priors on the fixed coefficients $\beta_{k} \sim \mathcal{N}(0, 1)$; a slightly more diffuse prior on the global intercept $\alpha \sim \text{Student T(10, 0, 1)}$; and a moderately regularizing prior on the scale of the hierarchical variances for the group-level effects $\upsilon$ from an exponential distribution with rate $\lambda =1$ [@Gelman2021]. We estimate each model via the probabilistic programming language Stan which implements the No-U-Turn sampler variant of Hamiltonian Markov Chain Monte Carlo [@Carpenter2017; @Hoffman2014]. For each of our linked fate dimensions and samples, we run with six Markov chains in parallel for 12,000 iterations each. The first 6,000 iterations for each chain are discarded after the initial warm-up adaptation stage leaving us with 36,000 posterior samples for subsequent analysis.[^3]
+
+[^3]: Estimation is performed under R version 4.2.1 using the `brms` package [@Buerkner2017; @Buerkner2018; @RLang2021], which serves as a front-end for regression models using Stan's implementation of Hamiltonian Markov Chain Monte-Carlo. Further details on the parameterization of the models and corresponding MCMC diagnostics are provided in the supplementary appendix.
+
+## Post-Stratification
+
+To perform the post-stratification stage, we generate posterior expectations for each model based on the full post-stratification table constructed from the census micro data and the predicted marginal distributions of partisanship and each linked fate measure. Our final post-stratified estimates for the probability of support for Trump by level of linked fate $p$ and some demographic group such as ancestry $j$ is calculated as
+
+$$
+\begin{aligned}
+\theta^{\mathrm{MrP}} = \frac{\sum_{p,j \in P,J}N_{p,j}\cdot \theta_{p,j}}{\sum_{p,j \in P,J}N_{p,j}}
+\end{aligned}
+$$ {#eq-post-strat}
+
+\noindent where $\theta$ is the predicted probability of support for Trump from our model and $N$ is the observed cell count in the post-stratification table. Taking the sum of the population predictions within each pair of cells $p,j \in P,J$ and dividing by the population total yields $\theta^{\mathrm{MrP}}$ which represents the census-adjusted estimate of the parameter.
+
+It is important to note here that at best this adjustment allows us to generalize about patterns beyond the observed sample to our target population of interest--the voting age population of Asian and Latino Americans--and MrP does not alone allow us to speak to whether observed relationships are causal, though recent work suggests it may improve the reliability of causal estimates [@Gao2022]. Our goals here are purely descriptive and our data constitutes only a single snapshot in time, thus regardless what patterns we may observe in the remainder of this article, we cannot make definitive claims about *why* these relationships might exist. We provide a discussion of how future work in this area can take advantage of MrP alongside experimental designs or panel surveys to estimate causal relationships within pan-ethnic sub-groups in the conclusion of this article.
+
+# Results
+
+Turning to our results, we begin by assessing the overall difference within each pan-ethnic group along each of the three dimensions of linked fate we consider here. Figure 1 presents the post-stratified posterior expectations for the probability of an individual in each group expressing support for Trump in the 2020 election. We see overall that each dimension of linked fate tends to be negatively associated with the probability of support for Trump among both Asians and Latinos. 
+
+Yet, as figure 1 illustrates, there is a considerable degree of non-linearity particularly among Asian Americans. As expected, this suggests individuals who feel a greater connection to their pan-ethnic or gender identity group tend to be less likely to support Trump. This relationship
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/combo_mrp_linked_fate.jpeg}
+  \label{fig:figure1}
+  \singlespacing 
+  \floatnote{Post-stratified estimates for the probability of a respondent expressing support for Trump in the 2020 election are posterior means based on 5,000 random draws from the posterior predictive distribution of a multilevel Bayesian logit model. The inner and outer point intervals represent 89\% and 95\% Bayesian credible intervals for the population parameter, respectively.}
+\end{figure}
+
+\noindent tends to be most apparent, however, among those who have a strong connection not simply to their own identity group, but to other men or women of color more broadly—the average difference in probabilities between the minimum and maximum values of the intersectional linked
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/combo_mrp_linked_fate_gender.jpeg}
+  \label{fig:figure2}
+  \singlespacing 
+  \floatnote{Post-stratified estimates for the probability of a respondent expressing support for Trump in the 2020 election by gender are posterior means based on 5,000 random draws from the posterior predictive distribution of a multilevel Bayesian logit model. The inner and outer point intervals represent 89\% and 95\% Bayesian credible intervals for the population parameter, respectively.}
+\end{figure}
+
+\noindent fate dimension is -0.20 [89% CI: -0.20, -0.19] for Asians and -0.32 [89% CI: -0.33, -0.30] among Latinos. We further disaggregate this relationship in figure 2, stratifying our predictions by gender, and see the overall pattern remains unchanged suggesting only modest gender differences in the probability of support for Trump in 2020 among Asian and Latino respondents. This suggests the observed relationship between intersectional linked fate and support, at least in the 2020 election is strong and negative among both male and female respondents.
+
+Among Asian Americans, we observe an average difference in the probability of support for Trump at each increase in the level of intersectional linked fate expressed by an individual of approximately -0.051 [89% CI: -0.053, -0.049] for males and -0.048 [89% CI: -0.049, -0.047] for females. Comparing this to the estimates for pan-ethnic and gender linked fate, we see negligible differences along the pan-ethnic dimension—an expected decrease of less than 0.01 in the probability of support on average—and modest differences at each level of gender linked fate with an expected difference in the probability of support of -0.022 [89% CI: -0.023, -0.021] for male respondents and -0.0165 [89% CI: -0.0168, -0.0162] among female respondents. Yet, as the top panel in figure 2 illustrates it may be inappropriate to interpret the relationship in this manner due to the apparent non-linearity present in the relationship between linked fate and support among Asian Americans.
+
+Turning our attention to Latinos, we see little evidence of gender differences—female respondents were only nominally more likely to express support for Trump on average across each of the dimensions compared to their male counterparts. As the bottom panel of figure 2 illustrates, we see a much clearer negative relationship between each dimension of linked fate and support for Trump compared to our estimates for the Asian American population. On average, we a see a difference in the probability of support for Trump among Latinos at each level of gender and pan-ethnic linked fate of approximately -0.0399 [89% CI: -0.0422, -0.0378] and -0.039 [89% CI: -0.0411, -0.0373] for male respondents. These differences are slightly less pronounced among women, but on average amount to an expected change of -0.0284 [89% CI: -0.029, -0.0277] for gender linked fate and -0.0238 [89% CI: -0.0246, -0.0229] for pan-ethnic linked fate.
+
+Much as was the case with the Asian American sample, however, we see the clearest relationship among Latinos for both male and female respondents in the intersectional linked fate
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/asian_mrp_linked_fate_anestry.jpeg}
+  \label{fig:figure3}
+  \singlespacing 
+  \floatnote{Post-stratified estimates for the probability of a respondent expressing support for Trump in the 2020 election by ancestry are posterior means based on 5,000 random draws from the posterior predictive distribution of a multilevel Bayesian logit model. The inner and outer point intervals represent 89\% and 95\% Bayesian credible intervals for the population parameter, respectively.}
+\end{figure}
+
+
+\begin{figure}[!t]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/asian_mrp_linked_fate_anestry_delta.jpeg}
+  \label{fig:figure4}
+  \singlespacing 
+  \floatnote{Post-stratified contrasts represent the average of the expected difference in the probability of a respondent expressing support for Trump in the 2020 election at each level of linked fate and ancestry based on 5,000 random draws from the posterior distribution of a multilevel Bayesian logit model. The inner and outer point intervals represent 89\% and 95\% Bayesian credible intervals for the population parameter, respectively.}
+\end{figure}
+
+\noindent dimension. For male respondents, we see an average difference of -0.09 [89% CI: -0.0945, -0.0854] in support for Trump across each level of intersectional linked fate among men and -0.0658 [89% CI: -0.0686, -0.0625] for women. That is, regardless of gender the average difference at level of intersectional linked fate is nearly three times that of the gender or pan-ethnic dimensions and we view this as suggestive evidence of our premise—the intersection of race and gender played an important role in candidate evaluation in the 2020 election for Latinos and to a lesser but still noticeable extent Asian Americans.
+
+One important caveat, however, remains and we thus turn to addressing the reality that Asian and Latino are pan-ethnic identity groups that exhibit a potentially large degree of within group heterogeneity. To examine whether the relationship between linked fate and support for Trump
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/latino_mrp_linked_fate_anestry.jpeg}
+  \label{fig:figure3}
+  \singlespacing 
+  \floatnote{Post-stratified estimates for the probability of a respondent expressing support for Trump in the 2020 election by ancestry are posterior means based on 5,000 random draws from the posterior predictive distribution of a multilevel Bayesian logit model. The inner and outer point intervals represent 89\% and 95\% Bayesian credible intervals for the population parameter, respectively.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\linewidth]{images/latino_mrp_linked_fate_anestry_delta.jpeg}
+  \label{fig:figure3}
+  \singlespacing 
+  \floatnote{Post-stratified contrasts represent the average of the expected difference in the probability of a respondent expressing support for Trump in the 2020 election at each level of linked fate and ancestry based on 5,000 random draws from the posterior distribution of a multilevel Bayesian logit model. The inner and outer point intervals represent 89\% and 95\% Bayesian credible intervals for the population parameter, respectively.}
+\end{figure}
+
+
+\noindent varies across national and cultural boundaries within groups, we perform post-stratification by ancestry to disaggregate Asian and Latino pan-ethnic groups into their constituent parts. Beginning with our Asian sample, figures 3 and 4 present the post-stratified predictions of support for Trump and the average expected change across each level of linked fate by ancestry group and dimension. Among Asians, we see substantial variation across different subgroups in the relationship between linked fate and support for Trump, particularly at the lowest levels—while high levels of linked fate among Asians tend to be associated with a lower probability of expressing support for Trump, the nature of this relationship at lower levels tends to vary substantially across sub-groups. The average contrasts presented in figure 4 provide an alternative way of depicting this within-group heterogeneity, and illustrate how that the relationship between intersectional linked fate and support for Trump tends to be most stable across each of the sub-groups while the gender and pan-ethnic dimensions exhibit variation in their magnitude and a sizable degree of non-linearity, particularly among those of East Asian descent.
+
+Finally, we turn to the Latino sample, predictions and contrasts for which are depicted in figures 5 and 6, respectively. As figure 5 illustrates, we see a much clearer pattern in terms of the direction of the relationship with higher levels of linked fate corresponding to lower probability of an individual expressing support for Trump and lower values of linked fate a higher probability. Yet, we also see stark differences in the magnitude of the relationship across groups, as further illustrated by the average contrasts in figure 6. Gender and intersectional linked fate, for example, appear more closely related to support for Trump in 2020 among those of Central American ancestry. While we can only speculate to why these dimensions appear more strongly related to support for these sub-groups, we argue here that it underscores the reality that Latinos and to an even larger degree Asian Americans, are not monolithic.
+
+# Conclusion
+
+In this paper we outlined a set of possible theoretical expectations centering on how contextual threats may prime multiple dimensions of an individual’s social identity. In the context of the 2020 U.S. presidential election, our primary expectation here was that intersectional dimension of linked fate—an attachment not simply to one’s gender identity group but also to members of other marginalized groups more broadly—would be more closely related to an individual’s willingness to express support for Trump. We also consider the possibility that such a relationship varies within pan-ethnic groups. Our findings here lend suggestive evidence to both expectations, though we must reiterate that our analysis is descriptive in nature. 
+
+Perhaps more importantly, as we have demonstrated here, modern computational tools and large survey samples such as the CMPS make it possible to examine the variance within and between groups which may be substantial and is itself of substantive interest in many areas of racial and ethnic politics research. We illustrate the possibility of disaggregation and encourage researchers interested in interaction effects and non-linear relationships to take advantage of MrP beyond the context of geographic boundaries to obtain more precise and stable estimates in both observational and experimental research. Future work can make use of this powerful tool to further explore how an individual’s attachment to different and overlapping social identities varies in its salience across contexts and over time and answer questions of why and how that we are unable to address in this paper.
