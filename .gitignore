@@ -8,6 +8,8 @@ output/predictions
 output/fits
 
 manuscript/latex/_cache
-manuscript/latex/.*.thm
+manuscript/latex/*.thm
+manuscript/latex/*.tex
+manuscript/latex/*.knit.md
 assets/.gitignore
 

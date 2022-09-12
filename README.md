@@ -10,14 +10,13 @@
 > racial, gender, and intersectional dimensions of linked fate shaped
 > candidate preferences among Asian and Latino Americans in the 2020
 > presidential election. Drawing on a post-election survey with a large
-> over-sample of non-white respondents, we employ a novel application of
-> Bayesian multilevel regression with post-stratification (MrP) to
-> examine variation in the role of linked fate within pan-ethnic
-> identity groups. Our results suggest intersectional linked fate is a
-> strong negative predictor of support for Trump among both Asian and
-> Latino respondents. We also find heterogeneity in this relationship
-> across pan-ethnic subgroups, particularly among those who express
-> lower levels of linked fate.
+> over-sample of non-white respondents, we employ Bayesian multilevel
+> regression with post-stratification (MrP) to examine variation in the
+> role of linked fate within pan-ethnic identity groups. Our results
+> suggest intersectional linked fate is a strong negative predictor of
+> support for Trump among both Asian and Latino respondents. We also
+> find heterogeneity in this relationship across pan-ethnic subgroups,
+> particularly among those who express lower levels of linked fate.
 
 ## Licenses
 
