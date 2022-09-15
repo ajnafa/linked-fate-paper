@@ -1,0 +1,441 @@
+---
+title: "Stronger Together? Linked Fate and Voter Preferences in the 2020 Election"
+author: "A. Jordan Nafa, Meredith Walsh Niezgoda, P. DeAnne Roark, and Valerie Martinez-Ebers"
+date: "September 15th, 2022"
+institute: "University of North Texas"
+format: 
+  revealjs:
+    theme: blood
+    transition: fade
+    highlight-style: monokai
+    toc-depth: 2
+    self-contained: true
+    citations-hover: true
+    code-link: true
+    code-block-bg: "#272822"
+    css: "style.css"
+    include-in-header: "math-colors.js"
+    pdf-separate-fragments: true
+editor: visual
+width: 1360
+height: 800
+bibliography: "../../assets/references.bib"
+csl: "../../assets/apsa.csl"
+link-citations: yes
+---
+
+```{r, include=FALSE}
+# Load the required libraries
+pacman::p_load(
+  "tidyverse",
+  "arrow",
+  "ggdist",
+  install = FALSE
+)
+
+## Base theme for the figures
+fig_theme <- function(.base_size, ...) {
+  .plot_theme <- theme_light(base_size = .base_size, base_family = "serif") +
+  ## Settings sepcific to the reveal.js theme
+  theme(
+    strip.background = element_blank(),
+    panel.background = element_rect(fill = "transparent", colour = NA),
+    plot.background = element_rect(fill = "transparent", colour = NA),
+    legend.background = element_rect(fill = "transparent", colour = NA),
+    legend.key = element_rect(fill = "transparent", colour = NA),
+    plot.title = element_text(color = "white", face = "bold"),
+    plot.subtitle = element_text(color = "white"),
+    plot.caption = element_text(color = "white", face = "italic"),
+    axis.text = element_text(color = "white"),
+    axis.title = element_text(color = "white", face = "bold"),
+    legend.title = element_text(color = "white", face = "bold"),
+    legend.text = element_text(color = "white", face = "bold"),
+    strip.text = element_text(face = "bold"),
+    plot.caption.position = "plot",
+    legend.position = "top"
+  )
+  
+  return(.plot_theme)
+}
+```
+
+## Introduction
+
+::: incremental
+-   How do intersecting identities influence candidate preference among members of pan-ethnic racial groups?
+
+    -   Do these relationships vary within pan-ethnic identity groups?
+
+-   We examine differences within and between pan-ethnic identity groups
+
+    -   Demonstrate the possibility of moving beyond "Latinos and Asian Americans are not monolithic" and treating heterogeneity among pan-ethnic groups as substantively interesting
+:::
+
+## Previous Research
+
+::: incremental
+-   Black Americans' Linked Fate [@Dawson1995]
+
+-   Latinos' and Asian Americans' Complicated Linked Fate [@Junn2008; @Sanchez2019]
+
+-   Intersectional Linked Fate [@Junn2017; @Gay2016]
+
+-   Intra-group differences in Linked Fate [@Arora2021]
+
+-   We attempt to bridge several lines of research on pan-ethnic linked fate that have thus far developed largely independent of one another
+:::
+
+## Social identities in the Era of Trump
+
+::: incremental
+-   Race, ethnicity, gender, and social identity theory
+
+-   What makes some identities more salient than others?
+
+-   The Trump presidency and the salience of group identity
+
+-   Theoretical Expectations
+
+    -   The salience of both pan-ethnic and gender-based dimensions of linked fate will vary across different sub-groups
+
+    -   The threat against multiple identities will activate intersectional linked fate
+
+    -   Relationship between intersectional linked fate and candidate preference is greater than the gender or pan-ethnic dimensions alone
+:::
+
+# Methods and Data
+
+## Data
+
+Asian (N = 3,898) and Latino (N = 3,950) Respondents on the 2020 Collaborative Multi-Racial Post-Election Survey [@Frasure2021]
+
+::: incremental
+-   Dependent Variable
+
+    $y_{i} = \begin{cases}1 \text{ if respondent } i \text{ Supported Trump in 2020}\\ 0 \text{ Otherwise}\end{cases}$
+
+-   Dimensions of Linked Fate: Pan-Ethnic, Gender, and Intersectional
+
+    -   *"How much do you think what happens to the following groups here in the U.S. will have something to do with what happens in your life? What happens to \[identity group\] will have..."*
+
+-   Sex, Citizenship, Age, Education, Ancestry, Partisan Identification, percentage University educated, Median Age
+:::
+
+## Multilevel Regression and Post-Stratification (MrP)
+
+::: incremental
+-   Bayesian Multilevel Logistic Regression
+
+-   Partial pooling of categorical predictors to penalize model complexity and prevent over-fitting [@Gelman2007; @Park2004]
+
+-   Weakly informative priors on the coefficients and hierarchical variances to stabilize computation [@Gelman2007; @Gelman2021]
+
+-   For non-census variables we first develop models to predict their distribution in the population and add them to the stratification table
+:::
+
+## MrP Model Specification {.smaller}
+
+$$
+\begin{aligned}
+y &\sim \mathrm{Binomial}(n, k, \theta)\\
+\mathrm{logit}(\theta) &= \alpha + \beta_{1}\text{Female}_{i} + \beta_{2}\text{Citizen}_{i} + \upsilon_{j[i]}^{\mathrm{Ancestry}} + \upsilon_{l[i]}^{\mathrm{Education}} + \upsilon_{m[i]}^{\mathrm{Age}} +\\
+&\quad \upsilon_{o[i]}^{\mathrm{Partisan}} + \upsilon_{p[i]}^{\mathrm{Linked~Fate}} + \upsilon_{q[i],p[i]}^{\mathrm{Female \times Linked~Fate}} + \upsilon_{q[i],j[i]}^{\mathrm{Female \times Ancestry}} +\\
+&\quad \upsilon_{p[i],j[i]}^{\mathrm{Linked~Fate \times Ancestry}}\\
+\text{where}\\
+\upsilon_{j}^{\mathrm{Ancestry}} &\sim \mathcal{N}(\left[\gamma_{0} + \gamma_{1}\text{% College}_{j} + \gamma_{2}\text{Median Age}_{j} \right], ~\sigma^{\mathrm{Ancestry}}) \quad \text{for } j \in \{1, 2, \dots, J\}\\
+\upsilon_{l}^{\mathrm{Education}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Education}})  \quad \text{for } l \in \{1, 2, \dots, L\}\\
+\upsilon_{m}^{\mathrm{Age}}&\sim  \mathcal{N}(0, ~\sigma^{\mathrm{Age}})  \quad \text{for } m \in \{1, 2, \dots, M\}\\
+\upsilon_{o}^{\mathrm{Partisan}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Partisan}})  \quad \text{for } o \in \{1, 2, \dots, O\}\\
+\upsilon_{p}^{\mathrm{Linked~Fate}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Linked~Fate}})\quad \text{for } p \in \{1, 2, \dots, P\}\\
+\upsilon_{q,p}^{\mathrm{Female \times Linked~Fate}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Female \times Linked~Fate}}) \quad \text{for } q \in \{1, 2, \dots, Q\} \text{ and } p \in \{1, 2, \dots, P\}\\
+\upsilon_{q,j}^{\mathrm{Female \times Ancestry}} &\sim \mathcal{N}(0, ~\sigma^{\mathrm{Female \times Ancestry}}) \quad \text{for } q \in \{1, 2\} \text{ and } j \in \{1, 2, \dots, J\}\\
+\upsilon_{p,j}^{\mathrm{Linked~Fate \times Ancestry}}&\sim \mathcal{N}(0, ~\sigma^{\mathrm{Linked~Fate \times Ancestry}}) \quad \text{for } p \in \{1, 2, \dots, P\} \text{ and } j \in \{1, 2, \dots, J\}
+\end{aligned}
+$$
+
+## Post-Stratification Stage
+
+Post-Stratified estimate by Linked Fate and Ancestry or Sex based on the 2019 American Community Survey 5-year Integrated Public Use Microdata Series data [@Ruggles2022]
+
+$$\begin{aligned}\theta^{\mathrm{MrP}} = \frac{\sum_{p,j \in P,J}N_{p,j}\cdot \theta_{p,j}}{\sum_{p,j \in P,J}N_{p,j}}\end{aligned}$$
+
+::: incremental
+-   $\theta$ is the predicted probability of support for Trump from our model
+
+-   $N$ is the observed cell count in the post-stratification table
+
+-   Summing over the population predictions within each pair of cells $p,j \in P,J$ and dividing by the population total yields $\theta^{\mathrm{MrP}}$ which represents the census-adjusted parameter estimate
+:::
+
+# Results
+
+------------------------------------------------------------------------
+
+```{r results-by-group, echo=FALSE, dpi=300, dev.args = list(bg = 'transparent'), fig.height=10, fig.width=18, fig.align='center', cache=TRUE, dev='svg'}
+combined_totals <- read_parquet(".data/combined_totals.gz.parquet")
+
+combined_totals %>% 
+  ggplot(aes(x = linked_fate_int, fill = type, y = theta)) +
+  facet_wrap(~ group, ncol = 2, scales = "free_y") +
+  stat_gradientinterval(
+    aes(slab_alpha = stat(pdf), shape = type),
+    point_interval = "median_qi",
+    position = "dodge",
+    fill_type = "gradient",
+    .width = c(.89, 0.95),
+    point_size = 3
+  ) +
+  # Set the shape parameter for each group
+  scale_shape_manual(values = c(22, 24, 23)) +
+  # Set the parameters of the y axis
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0, 0.50)) +
+  # Use the Viridis color pallet
+  scale_fill_manual(values = c("#9400D3", "#7FFF00", "#CD0000")) +
+  # Add labels to the plot
+  labs(
+    x = "Linked Fate (Low - High)",
+    y = "Probability of Support for Trump",
+    title = str_wrap("Figure 1. Post-Stratified Probabilities of Support for Trump by Linked Fate Dimension", width = 80)
+  ) +
+  # Setting the parameters for the plot legend
+  guides(fill = guide_legend(
+    title = "Dimension",
+    override.aes = list(
+      shape = c(22, 24, 23),
+      fill = c("#9400D3", "#7FFF00", "#CD0000"),
+      size = 10
+    )
+  ),
+  slab_fill = "none",
+  shape = "none",
+  slab_alpha = "none"
+  ) +
+    fig_theme(.base_size = 30) +
+  # Additional theme adjustments for title and caption alignment
+  theme(
+    plot.caption.position = "plot",
+    plot.title.position = "plot",
+    legend.position = "top",
+    plot.margin = margin(2,8,5,5, "mm")
+  )
+```
+
+------------------------------------------------------------------------
+
+```{r results-by-gender-latino, echo=FALSE, dpi=300, dev.args = list(bg = 'transparent'), fig.height=10, fig.width=18, fig.align='center', cache=TRUE, dev='svg'}
+combined_gender_gap <- read_parquet(".data/combined_gender_gap.gz.parquet")
+
+combined_gender_gap  %>% 
+  filter(group == "Hispanic or Latino") %>% 
+  ggplot(aes(x = linked_fate_int, fill = type, y = theta)) +
+  facet_wrap(~ str_c(group, ": ", female), ncol = 2, scales = "free_y") +
+  stat_gradientinterval(
+    aes(slab_alpha = stat(pdf), shape = type),
+    point_interval = "median_qi",
+    position = "dodge",
+    fill_type = "gradient",
+    .width = c(.89, 0.95),
+    point_size = 3
+  ) +
+  # Set the shape parameter for each group
+  scale_shape_manual(values = c(22, 24, 23)) +
+  # Set the parameters of the y axis
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0, 0.50)) +
+  # Use the Viridis color pallet
+  scale_fill_manual(values = c("#9400D3", "#7FFF00", "#CD0000")) +
+  # Add labels to the plot
+  labs(
+    x = "Linked Fate (Low - High)",
+    y = "Probability of Support for Trump",
+    title = str_wrap("Figure 2A. Post-Stratified Probabilities of Support for Trump among Latinos by Linked Fate Dimension and Gender", width = 80)
+  ) +
+  # Setting the parameters for the plot legend
+  guides(fill = guide_legend(
+    title = "Dimension",
+    override.aes = list(
+      shape = c(22, 24, 23),
+      fill = c("#9400D3", "#7FFF00", "#CD0000"),
+      size = 10
+    )
+  ),
+  slab_fill = "none",
+  shape = "none",
+  slab_alpha = "none"
+  ) +
+    fig_theme(.base_size = 30) +
+  # Additional theme adjustments for title and caption alignment
+  theme(
+    plot.caption.position = "plot",
+    plot.title.position = "plot",
+    legend.position = "top",
+    plot.margin = margin(2,8,5,5, "mm")
+  )
+```
+
+------------------------------------------------------------------------
+
+```{r results-by-gender-asian, echo=FALSE, dpi=300, dev.args = list(bg = 'transparent'), fig.height=10, fig.width=18, fig.align='center', cache=TRUE, dev='svg'}
+combined_gender_gap  %>% 
+  filter(!group == "Hispanic or Latino") %>% 
+  ggplot(aes(x = linked_fate_int, fill = type, y = theta)) +
+  facet_wrap(~ str_c(group, ": ", female), ncol = 2, scales = "free_y") +
+  stat_gradientinterval(
+    aes(slab_alpha = stat(pdf), shape = type),
+    point_interval = "median_qi",
+    position = "dodge",
+    fill_type = "gradient",
+    .width = c(.89, 0.95),
+    point_size = 3
+  ) +
+  # Set the shape parameter for each group
+  scale_shape_manual(values = c(22, 24, 23)) +
+  # Set the parameters of the y axis
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 5), limits = c(0, 0.50)) +
+  # Use the Viridis color pallet
+  scale_fill_manual(values = c("#9400D3", "#7FFF00", "#CD0000")) +
+  # Add labels to the plot
+  labs(
+    x = "Linked Fate (Low - High)",
+    y = "Probability of Support for Trump",
+    title = str_wrap("Figure 2B. Post-Stratified Probabilities of Support for Trump among Asians by Linked Fate Dimension and Gender", width = 80)
+  ) +
+  # Setting the parameters for the plot legend
+  guides(fill = guide_legend(
+    title = "Dimension",
+    override.aes = list(
+      shape = c(22, 24, 23),
+      fill = c("#9400D3", "#7FFF00", "#CD0000"),
+      size = 10
+    )
+  ),
+  slab_fill = "none",
+  shape = "none",
+  slab_alpha = "none"
+  ) +
+    fig_theme(.base_size = 30) +
+  # Additional theme adjustments for title and caption alignment
+  theme(
+    plot.caption.position = "plot",
+    plot.title.position = "plot",
+    legend.position = "top",
+    plot.margin = margin(2,8,5,5, "mm")
+  )
+```
+
+------------------------------------------------------------------------
+
+```{r results-by-ancestry-latino, echo=FALSE, dpi=300, dev.args = list(bg = 'transparent'), fig.height=16, fig.width=28, fig.align='center', cache=TRUE, dev='svg'}
+combined_ancestry <- read_parquet(".data/combined_ancestry_delta.gz.parquet")
+
+combined_ancestry %>% 
+    filter(group == "Hispanic or Latino") %>% 
+  ggplot(aes(x = theta_delta, y = fct_rev(ancestry), fill = fct_rev(ancestry))) +
+  facet_wrap(~str_c(type, " Linked Fate"), ncol = 3) +
+  stat_gradientinterval(
+    aes(slab_alpha = stat(pdf), shape = type),
+    point_interval = "mean_qi",
+    position = "dodge",
+    fill_type = "gradient",
+    .width = c(.80, 0.95),
+    point_size = 3
+  ) +
+  # Set the shape parameter for each group
+  scale_shape_manual(values = c(22, 24, 23)) +
+  # Use the Viridis color pallet
+  scale_fill_manual(values = viridisLite::turbo(n = 25)) +
+  # Scales for the y axis
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 6), limits = c(-0.13, 0.13)) +
+  # Add labels to the plot
+  labs(
+    y = "",
+    x = latex2exp::TeX(r'($\Delta Pr(\theta \, |\, Linked\,Fate,\, Ancestry)$)', bold = TRUE),
+    title = str_wrap("Figure 3A. Average Post-Stratified Contrasts for the Probability of Support for Trump among Hispanics and Latinos by Ancestry and Linked Fate Dimension", width = 100)
+  ) +
+  # Setting the parameters for the plot legend
+  guides(fill = "none",
+         slab_fill = "none",
+         shape = "none",
+         slab_alpha = "none"
+  ) +
+    fig_theme(.base_size = 40) +
+  # Additional theme adjustments for title and caption alignment
+  theme(
+    plot.caption.position = "plot",
+    plot.title.position = "plot",
+    legend.position = "top",
+    plot.margin = margin(2,8,5,5, "mm")
+  )
+```
+
+------------------------------------------------------------------------
+
+```{r results-by-ancestry-asian, echo=FALSE, dpi=300, dev.args = list(bg = 'transparent'), fig.height=16, fig.width=28, fig.align='center', cache=TRUE, dev='svg'}
+combined_ancestry <- read_parquet(".data/combined_ancestry_delta.gz.parquet")
+
+combined_ancestry %>% 
+    filter(!group == "Hispanic or Latino") %>% 
+  ggplot(aes(x = theta_delta, y = fct_rev(ancestry), fill = fct_rev(ancestry))) +
+  facet_wrap(~str_c(type, " Linked Fate"), ncol = 3) +
+  stat_gradientinterval(
+    aes(slab_alpha = stat(pdf), shape = type),
+    point_interval = "mean_qi",
+    position = "dodge",
+    fill_type = "gradient",
+    .width = c(.80, 0.95),
+    point_size = 3
+  ) +
+  # Set the shape parameter for each group
+  scale_shape_manual(values = c(22, 24, 23)) +
+  # Use the Viridis color pallet
+  scale_fill_manual(values = viridisLite::turbo(n = 25)) +
+  # Scales for the y axis
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 6), limits = c(-0.13, 0.13)) +
+  # Add labels to the plot
+  labs(
+    y = "",
+    x = latex2exp::TeX(r'($\Delta Pr(\theta \, |\, Linked\,Fate,\, Ancestry)$)', bold = TRUE),
+    title = str_wrap("Figure 3B. Average Post-Stratified Contrasts for the Probability of Support for Trump among Asians by Ancestry and Linked Fate Dimension", width = 90)
+  ) +
+  # Setting the parameters for the plot legend
+  guides(fill = "none",
+         slab_fill = "none",
+         shape = "none",
+         slab_alpha = "none"
+  ) +
+    fig_theme(.base_size = 40) +
+  # Additional theme adjustments for title and caption alignment
+  theme(
+    plot.caption.position = "plot",
+    plot.title.position = "plot",
+    legend.position = "top",
+    plot.margin = margin(2,8,5,5, "mm")
+  )
+```
+
+# Conclusions
+
+## Main Findings
+
+::: incremental
+-   People who feel more connected to other "\[men/women\] of color" were overall less likely to support Trump in 2020
+
+-   Relationship among Asian Americans is very non-linear across each dimension of Linked Fate, and particularly among those of East Asian descent
+
+-   Pan-Ethnic identity groups are far from monolithic and this heterogeneity is substantively interesting
+
+-   Not much evidence of within group-gender gaps in the joint distribution of linked fate and support for Trump across all dimensions
+:::
+
+## Conclusions and Limitations
+
+::: incremental
+-   We illustrate the application of MrP, the "gold standard for subnational public opinion estimation" [@Lax2009a], need not be limited to geography
+
+-   Broad applicability in the racial and ethnic politics literature, particularly in descriptive work but can also be used to improve estimates in experimental research [see @Gao2022]
+
+-   Our data is purely cross-sectional and constitutes a single snapshot in time---our aims here are purely descriptive
+
+-   We cannot speak to the question of *why* we observe these within and between group differences in the relationships between linked fate and support for Trump as that is a causal question with a causal answer
+:::
+
+## References
