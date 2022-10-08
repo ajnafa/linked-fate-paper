@@ -5,9 +5,7 @@
 # Load the necessary libraries----
 pacman::p_load(
   "tidyverse",
-  "data.table",
   "sjlabelled",
-  "dtplyr",
   "arrow",
   "ipumsr",
   "datawizard",

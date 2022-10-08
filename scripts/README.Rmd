@@ -1,0 +1,25 @@
+---
+title: "Reproducibility Information"
+output: github_document
+bibliography: "../assets/references.bib"
+csl: "../assets/apsa.csl"
+link-citations: true
+---
+
+## System and Computational Information
+
+The sub-folders of this directory contain each of the scripts necessary to reproduce the analysis in the main text and are sequentially numbered in the order they must be executed. All analyses presented in the manuscript were performed under R version 4.2.1 "Funny-Looking Kid" on a Windows 10 desktop computer with a 12-core Ryzen 9 5900X CPU, 128GB of DDR4 Memory, and an Nvidia RTX 3080TI GPU using cmdstan 2.30.1 as a backend via `cmdstanr` version 0.5.3 and `brms` version 2.17.5 [@Buerkner2017; @Buerkner2018; @Gabry2022; @RLang2022].
+
+## Data Preparation
+
+- The survey data we rely on is currently only available to those listed as [collaborators on the 2020 CMPS](https://ucla.box.com/shared/static/kj0b769nu55r443sb113jo9egyzs6jiw.pdf) and their co-authors but can be obtained from the ICPSR repository sometime in 2023. In the meantime, detailed information on the survey design can be found at [the webpage for the 2020 CMPS](https://cmpsurvey.org/2020-survey/) [@Frasure2021]. All pre-processing and harmonization necessary for compatability with the Census data we use for post-stratification is performed by and documented in the scripts [`01_Latino_CMPS_2020.R`](01-data-prep/01_Latino_CMPS_2020.R) and [`02_Asian_CMPS_2020.R`](01-data-prep/02_Asian_CMPS_2020.R) located under the `01-data-prep` directory of this folder.
+
+- Data for the post-stratification tables is based on the U.S. Census Bureau's 5-year estimates from the 2019 American Community Survey and can be obtained from the [IPUMS USA data portal](https://usa.ipums.org/usa/) [@Ruggles2022]. All recoding and aggregation necessary to construct the post-stratification tables for each group is performed by and documented in the scripts [`03_Latino_Post-Stratification_Table.R`](01-data-prep/03_Latino_Post-Stratification_Table.R) and [`04_AAPI_Post-Stratification_Table.R`](01-data-prep/04_AAPI_Post-Stratification_Table.R) located under the `01-data-prep` directory of this folder.
+
+- This step requires the `tidyverse` [@Wickham2019], `sjlabelled` [@Ludecke2022], `arrow` [@Richardson2022], `ipumsr` [@GFE2022], `datawizard` [@Patil2022], and `haven` packages [@Wickham2022]
+
+
+## References
+
+
+
