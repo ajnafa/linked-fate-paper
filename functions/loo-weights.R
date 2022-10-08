@@ -35,8 +35,8 @@
 #' @param ... Additional arguments for future development. Currently unused.
 #'
 #' @return The function returns a numeric vector of weights corresponding to
-#' each model which can be passed to the `brms::pp_average` or `brms::posterior_average`
-#' to obtain a stacked posterior distribution.
+#' each model which can be passed to the `brms::pp_average` or 
+#' `brms::posterior_average` to obtain a stacked posterior distribution.
 #'
 #' @export stacking_weights
 #' @export
