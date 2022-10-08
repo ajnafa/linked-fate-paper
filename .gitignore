@@ -7,9 +7,14 @@ data
 output/predictions
 output/fits
 
+# Ignoring miscellaneous manuscript files
 manuscript/latex/_cache
 manuscript/latex/*.thm
 manuscript/latex/*.tex
 manuscript/latex/*.knit.md
+manuscript/ms-word/_cache
+manuscript/.data
+manuscript/presentation
+
 assets/.gitignore
 
