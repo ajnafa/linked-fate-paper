@@ -31,22 +31,22 @@
 
 formula_builder <- function(lhs, rhs, ...) {
   
-  ## Validate the formula arguments
+  # Validate the formula arguments
   stopifnot(
     "lhs and rhs should be character vectors" = (is.character(lhs) & is.character(rhs))
   )
   
-  ## Make a list of all unique combinations of lhs ~ rhs 
+  # Make a list of all unique combinations of lhs ~ rhs 
   formulas <- expand.grid(lhs, rhs, stringsAsFactors = FALSE)
   
-  ## Initialize a list to store the formulas in
-  out <- list()
+  # Initialize a list to store the formulas in
+  out <- rep(NA_character_, length.out = nrow(formulas))
   
-  ## Build a list of formulas for each pair formulas
+  # Build a list of formulas for each pair formulas
   for (i in 1:nrow(formulas)) {
-    out[[i]] <- glue::glue_collapse(formulas[i, ]) 
+    out[i] <- glue::glue_collapse(formulas[i, ]) 
   }
   
-  ## Return the output
+  # Return the output
   return(out)
 }

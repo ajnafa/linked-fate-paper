@@ -204,7 +204,9 @@ cmps_2020_latino <- cmps_2020 %>%
     panethnic_lfate = Q551_Q559r2,
     gender_lfate = Q551_Q559r8,
     inter_lfate = Q551_Q559r9
-  )
+  ) %>% 
+  # Drop original heritage variable
+  select(-heritage_oe)
 
 # Write the pre-processed 2020 CMPS subset to a file
 write_parquet(
