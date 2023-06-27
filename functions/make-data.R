@@ -100,23 +100,20 @@ make_partisan_data <- function(cmps_data, .vars, post_strat, ...) {
 #' @export make_lfate_data
 #' 
 
-# A Function for building the linked fate data
 make_lfate_data <- function(cmps_data, .vars, post_strat, resp, ...) {
   
-  # Store the name of the response variable
-  resp_var <- enquo(resp)
-  
   # Extract a subset of the covariates for the model
-  df.subset <- cmps_data[colnames(cmps_data) %in% .vars]
+  df.subset <- cmps_data[colnames(cmps_data) %in% c(.vars, resp)]
   
   # Exclude missing data in the CMPS
   df.complete <- df.subset[complete.cases(df.subset), ]
   
   # Transform the linked fate variable in resp to integer
   df.aggregate <- df.complete %>% 
-    mutate(!! resp_var := as.integer(!! resp_var)) %>% 
+    # Coerce the factor column to an integer
+    mutate(across({{ resp }}, ~ as.integer(.x))) %>% 
     # Convert the linked fate column to seperate dummies
-    fastDummies::dummy_cols(select_columns = .vars[length(.vars)]) %>% 
+    fastDummies::dummy_cols(., select_columns = resp) %>% 
     # Group the data by covariates
     group_by(female, age_cat, educ, citizen, ancestry, partisan) %>% 
     # Aggregate the cell counts
@@ -128,7 +125,8 @@ make_lfate_data <- function(cmps_data, .vars, post_strat, resp, ...) {
       # Create a size variable for the trials
       trials = rowSums(select(., matches("_lfate_[1-5]"))),
       # Outcome needs to be a matrix with a column for each response
-      !! resp_var := cbind(select(., matches("_lfate_[1-5]"))),
+      "{resp}" := as.matrix(cbind(select(., matches("_lfate_[1-5]")))),
+      # Covariates
       across(female:partisan, ~ .x)
     ) %>% 
     # Merge in group-level predictors
@@ -138,7 +136,7 @@ make_lfate_data <- function(cmps_data, .vars, post_strat, resp, ...) {
         distinct(),
       by = "ancestry"
     )
-
+  
   # Apply sum contrast coding to gender and citizen
   df.aggregate <- within(df.aggregate, {
     contrasts(female) <- contr.sum(levels(female))/2
@@ -148,5 +146,6 @@ make_lfate_data <- function(cmps_data, .vars, post_strat, resp, ...) {
   # Return the processed data
   return(df.aggregate)
 }
+
 
 

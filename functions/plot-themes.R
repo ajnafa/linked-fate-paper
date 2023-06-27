@@ -1,19 +1,20 @@
 # Custom theme for data visualizations
-plot_theme <- function(
-    title_size = NULL, xaxis_size = NULL, 
-    yaxis_size = NULL, strip_size = NULL, 
-    strip_face = NULL, caption.hjust = 1, 
-    caption.vjust = 0, x_axis_face = NULL, 
-    y_axis_face = NULL, transparent = FALSE, 
-    axis_text_size = NULL, 
-    legend_text_size = NULL,
-    subtitle_size = NULL,
-    caption_size = NULL,
-    ...
-) {
+plot_theme <- function(title_size = NULL, 
+                       xaxis_size = NULL, 
+                       yaxis_size = NULL, 
+                       strip_size = NULL, 
+                       strip_face = NULL, 
+                       caption.hjust = 1, 
+                       caption.vjust = 0, 
+                       x_axis_face = NULL, 
+                       y_axis_face = NULL, 
+                       transparent = FALSE, 
+                       axis_text_size = NULL, 
+                       legend_text_size = NULL,
+                       subtitle_size = NULL,
+                       caption_size = NULL,
+                       ...) {
   .theme <- theme_minimal() + theme(
-    # Set the outer margins of the plot to 1/5 of an inch on all sides
-    #plot.margin = margin(0.2, 0.2, 0.2, 0.2, "in"),
     # Specify the default settings for the plot title
     plot.title = element_text(
       size = title_size,
@@ -69,9 +70,9 @@ plot_theme <- function(
       size = legend_text_size,
       family = "serif"
     ),
-    #
+    # Set the strip background fill to blank
     strip.background = element_rect(fill = NA),
-    #
+    # Adjust the strip text size settings
     strip.text = element_text(
       family = "serif", 
       size = strip_size,

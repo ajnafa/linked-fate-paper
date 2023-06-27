@@ -1,15 +1,15 @@
 #-------------------Non-Census MrP Models for Partisanship----------------------
 #-Author: A. Jordan Nafa--------------------------------Created: July 23, 2022-#
-#-R Version: 4.2.1------------------------------Last Revised: January 23, 2023-#
+#-R Version: 4.2.1------------------------------Last Revised: January 27, 2023-#
 
 # Load the necessary libraries
 pacman::p_load(
   "tidyverse", # Suite of packages for data management 
   "arrow", # Apache Arrow data management and file storage
   "brms", # Bayesian regression models with Stan
-  "tidybayes", # Functions for wrangling posteriors tidy-style
-  "future",
-  "furrr",
+  "data.table", # Functions for wrangling posteriors tidy-style
+  "future", # Parallel computation in R
+  "furrr", # purrr interface to future
   "fastDummies", # Create dummy variables from a factor
   install = FALSE
 )
@@ -57,7 +57,7 @@ names(partisan_data) <- c("Latino", "Asian")
 #------------------------------------------------------------------------------#
 
 # Base Model and Interactions for Partisanship
-partisan_rhs <- c(
+latino_partisan_rhs <- c(
   "", # Partisanship Baseline Model
   " + (1 | age_cat:educ)", # Age x Education
   " + (1 | ancestry:educ)", # Ancestry x Education
@@ -69,10 +69,10 @@ partisan_rhs <- c(
 )
 
 # Return each combination of lhs and rhs as a list
-partisan_forms <- formula_builder(
+latino_partisan_forms <- formula_builder(
   lhs = "partisan | trials(trials) ~ female + citizen + (1 | age_cat) + 
   (1 | educ) + (1 | ancestry) + pct_college_z + region",
-  rhs = partisan_rhs
+  rhs = latino_partisan_rhs
 )
 
 # Specify some weakly informative priors for the model parameters
@@ -112,7 +112,7 @@ plan(tweak(multisession, workers = 3))
 
 # Fit the latino partisanship models
 latino_partisan_mlogit_ls <- future_map2(
-  .x = partisan_forms,
+  .x = latino_partisan_forms,
   .y = latino_partisan_files,
   ~ brm(
     formula = .x,
@@ -196,8 +196,53 @@ latino_partisan_mlogit_ls <- map(
   ))
 
 #------------------------------------------------------------------------------#
+#----------Post-Stratification Table for Latino Partisan Identification---------
+#------------------------------------------------------------------------------#
+
+# Generate stacking weights for each model
+latino_kfold_weights <- stacking_weights(
+  latino_partisan_mlogit_ls, 
+  weights = "kfold"
+)
+
+# Generate stacked predictions for party identification in the population
+latino_post_strat_party <- party_mrp_preds(
+  models = latino_partisan_mlogit_ls,
+  post_strat = post_strat[[1]],
+  weights = latino_kfold_weights,
+  ndraws = 6e3
+)
+
+# Write the post-stratification table to the disk
+write_parquet(
+  latino_post_strat_party,
+  paste0(preds_dir, "latino/latino_poststrat_partisan.gz.parquet"),
+  compression = "gzip",
+  compression_level = 6
+)
+
+#------------------------------------------------------------------------------#
 #---------------------Model Estimation for the Asian Sample---------------------
 #------------------------------------------------------------------------------#
+
+# Base Model and Interactions for Partisanship
+asian_partisan_rhs <- c(
+  "", # Partisanship Baseline Model
+  " + (1 | age_cat:educ)", # Age x Education
+  " + (1 | ancestry:educ)", # Ancestry x Education
+  " + (1 | female:educ)",  # Gender x Education
+  " + (1 | female:age_cat)", # Gender x Age
+  " + (1 | female:ancestry)", # Gender x Ancestry
+  " + (1 | ancestry:age_cat)", # Ancestry x Age
+  " + (1 | age_cat:educ) + (1 | ancestry:educ)"
+)
+
+# Return each combination of lhs and rhs as a list
+asian_partisan_forms <- formula_builder(
+  lhs = "partisan | trials(trials) ~ female + citizen + (1 | age_cat) + 
+  (1 | educ) + (1 | ancestry) + pct_college_z + region",
+  rhs = asian_partisan_rhs
+)
 
 # File paths to save the models to
 asian_partisan_files <- paste0(
@@ -210,7 +255,8 @@ asian_partisan_files <- paste0(
     "female_x_educ",
     "female_x_age",
     "female_x_ancestry",
-    "ancestry_x_age"
+    "ancestry_x_age",
+    "age_x_educ_x_ancestry"
   )
 )
 
@@ -219,7 +265,7 @@ plan(tweak(multisession, workers = 3))
 
 # Fit the Asian partisanship models
 asian_partisan_mlogit_ls <- future_map2(
-  .x = partisan_forms,
+  .x = asian_partisan_forms,
   .y = asian_partisan_files,
   ~ brm(
     formula = .x,
@@ -302,3 +348,29 @@ asian_partisan_mlogit_ls <- map(
     .x,
     criterion = "loo"
   ))
+
+#------------------------------------------------------------------------------#
+#----------Post-Stratification Table for Asian Partisan Identification----------
+#------------------------------------------------------------------------------#
+
+# Generate stacking weights for each model
+asian_kfold_weights <- stacking_weights(
+  asian_partisan_mlogit_ls, 
+  weights = "kfold"
+)
+
+# Generate stacked predictions for party identification in the population
+asian_post_strat_party <- party_mrp_preds(
+  models = asian_partisan_mlogit_ls,
+  post_strat = post_strat[[2]],
+  weights = asian_kfold_weights,
+  ndraws = 6e3
+)
+
+# Write the post-stratification table to the disk
+write_parquet(
+  asian_post_strat_party,
+  paste0(preds_dir, "asian/aapi_poststrat_partisan.gz.parquet"),
+  compression = "gzip",
+  compression_level = 6
+)

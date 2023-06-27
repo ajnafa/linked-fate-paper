@@ -22,7 +22,7 @@ options(
 partisan_dir <- "output/fits/models/partisan-mrp/"
 
 # Base directory to write the linked fate models to
-lfate_dir <- "output/fits/models/partisan-mrp/"
+lfate_dir <- "output/fits/models/lfate-mrp/"
 
 # Base directory to write the outcome models to
 outcome_dir <- "output/fits/models/trump-support-mrp/"
